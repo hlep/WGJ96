@@ -6,6 +6,30 @@
 #include "GameFramework/Actor.h"
 #include "RoadGrid.generated.h"
 
+class ARoadPart;
+
+USTRUCT(BlueprintType)
+struct FRoadArrayRow
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "2D Array")
+	TArray<ARoadPart*> Cols;
+
+	FRoadArrayRow() {}
+};
+
+USTRUCT(BlueprintType)
+struct FRoadArray
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "2D Array")
+	TArray<FRoadArrayRow> Rows;
+
+	FRoadArray() {}
+};
+
 UCLASS()
 class WGJ96_API ARoadGrid : public AActor
 {
@@ -22,5 +46,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+private:
+
+	FRoadArray RoadArray;
 
 };
