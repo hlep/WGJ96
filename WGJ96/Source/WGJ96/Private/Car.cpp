@@ -94,7 +94,6 @@ void ACar::CheckForStop()
 	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_PhysicsBody, CollisionParams))
 	{
 		Stop = true;
-		UE_LOG(LogTemp, Warning, TEXT("STOP"));
 	}
 	else { Stop = false; }
 

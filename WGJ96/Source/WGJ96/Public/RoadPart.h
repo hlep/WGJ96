@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "RoadPart.generated.h"
 
+class ACar;
+
 UCLASS()
 class WGJ96_API ARoadPart : public AActor
 {
@@ -13,16 +15,14 @@ class WGJ96_API ARoadPart : public AActor
 
 	/** StaticMesh component for the clickable block */
 	UPROPERTY(Category = Block, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* BlockMesh;
+	class UStaticMeshComponent* RoadMesh;
 
+	UPROPERTY(Category = Block, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* SpawnLocation;
 	
 public:	
 	// Sets default values for this actor's properties
 	ARoadPart();
-
-	/** Handle the block being clicked */
-	UFUNCTION()
-	void BlockClicked(UPrimitiveComponent* ClickedComp, FKey ButtonClicked);
 
 protected:
 	// Called when the game starts or when spawned
@@ -31,5 +31,15 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+protected:
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
+	float RoadLength = 254.f; // Length of one static mesh
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
+	float SpawnSpeed = 3.f;
+
+private:
 
 };
