@@ -93,10 +93,26 @@ void ACar::CheckForStop()
 	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 0, 0, 1);
 	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_PhysicsBody, CollisionParams))
 	{
-		Stop = true;
+		FVector CarVector = FVector(0);
+		auto CarInFront = Cast<ACar>(OutHit.GetActor());
+		if (CarInFront)
+		{
+			CarVector = CarInFront->GetHeadingVector();
+			if (!CarVector.Equals(HeadingVector, 0.01))
+			{
+				Stop = false; // Stop if car is headed in the same direction as this
+			}
+			else 
+			{
+				Stop = true;
+			}
+		}
+		else 
+		{
+			Stop = true;
+		}
 	}
 	else { Stop = false; }
-
 }
 
 // TODO add delegate
@@ -105,3 +121,5 @@ void ACar::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector Nor
 
 }
 
+FVector ACar::GetHeadingVector()
+{	return HeadingVector;	}
