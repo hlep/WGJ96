@@ -10,15 +10,11 @@ ACar::ACar()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Create dummy root scene component
-	DummyRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Dummy0"));
-	RootComponent = DummyRoot;
-
-	PawnMovement = CreateDefaultSubobject<UPawnMovementComponent>(TEXT("PawnMovement"));
-
 	CarMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CarMesh"));
-	CarMesh->SetupAttachment(DummyRoot);
+	//CarMesh->SetupAttachment(DummyRoot);
 	CarMesh->SetSimulatePhysics(true);
+	CarMesh->SetNotifyRigidBodyCollision(true);
+	RootComponent = CarMesh;
 
 	// Set up variables for each car type
 	switch (CarClass)
@@ -45,14 +41,14 @@ void ACar::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	HeadingVector = FVector::ForwardVector;
+	HeadingVector = GetActorForwardVector();
 }
 
 // Called every frame
 void ACar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	Drive();
+	Drive(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -62,11 +58,22 @@ void ACar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void ACar::Drive()
+void ACar::Drive(float DeltaTime)
 {
-	//if(CarMesh->GetComponentVelocity().X < MaxSpeed)
+	auto CurrentVelocity = CarMesh->GetComponentVelocity();
+
+	if(CurrentVelocity.GetMax() < MaxSpeed)
+	{
+		//auto VelocityToSet = (HeadingVector * (Acceleration * DeltaTime) + CurrentVelocity);
+		//FMath::Clamp<float>(VelocityToSet.X, 0.f, MaxSpeed);
+		//CarMesh->SetPhysicsLinearVelocity(VelocityToSet);
+
+		CarMesh->AddImpulse(HeadingVector * Acceleration, NAME_None, true);
+		//TODO Clamp velocity to MaxSpeed
+
+	}
 	auto Velocity = CarMesh->GetComponentVelocity();
-	CarMesh->SetPhysicsLinearVelocity(HeadingVector * MaxSpeed);
+	
 	UE_LOG(LogTemp, Warning, TEXT("CurrentVelocity: %s"), *Velocity.ToCompactString());
 }
 

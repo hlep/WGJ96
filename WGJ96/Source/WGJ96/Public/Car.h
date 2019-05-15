@@ -22,15 +22,8 @@ class WGJ96_API ACar : public APawn
 {
 	GENERATED_BODY()
 
-	/** Dummy root component */
-	UPROPERTY(Category = Block, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* DummyRoot;
-
 	UPROPERTY(Category = Block, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* CarMesh;
-
-	UPROPERTY(Category = Block, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UPawnMovementComponent* PawnMovement;
 
 public:
 	// Sets default values for this pawn's properties
@@ -50,13 +43,13 @@ public:
 protected:
 
 	UFUNCTION(BlueprintCallable)
-	void Drive();
+	void Drive(float DeltaTime);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup") // TODO make ReadOnly
 	ECarEnum CarClass = ECarEnum::CE_Car;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup") // TODO make ReadOnly
-	float MaxSpeed = 300;
+	float MaxSpeed = 600;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
 	float Acceleration = 150;
