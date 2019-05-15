@@ -57,5 +57,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
 	float Braking = 200;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
+	bool bIsCounted = false;
+
+private:
+
+	void CheckForStop();
+
+	void OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 	FVector HeadingVector = FVector(0);
+
+	float StopDistance = 250.f;
+
+	bool Stop = false;
 };

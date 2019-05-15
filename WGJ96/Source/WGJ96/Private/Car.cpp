@@ -3,6 +3,7 @@
 
 #include "Car.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 ACar::ACar()
@@ -11,9 +12,8 @@ ACar::ACar()
 	PrimaryActorTick.bCanEverTick = true;
 
 	CarMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CarMesh"));
-	//CarMesh->SetupAttachment(DummyRoot);
 	CarMesh->SetSimulatePhysics(true);
-	CarMesh->SetNotifyRigidBodyCollision(true);
+	CarMesh->SetNotifyRigidBodyCollision(true); // Simulation generates hit events
 	RootComponent = CarMesh;
 
 	// Set up variables for each car type
@@ -32,8 +32,6 @@ ACar::ACar()
 		break;
 	}
 
-
-
 }
 
 // Called when the game starts or when spawned
@@ -48,7 +46,11 @@ void ACar::BeginPlay()
 void ACar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	Drive(DeltaTime);
+	CheckForStop();
+	if (!Stop) 
+	{
+		Drive(DeltaTime);
+	}
 }
 
 // Called to bind functionality to input
@@ -70,10 +72,37 @@ void ACar::Drive(float DeltaTime)
 
 		CarMesh->AddImpulse(HeadingVector * Acceleration, NAME_None, true);
 		//TODO Clamp velocity to MaxSpeed
-
+		
+		//TODO Make smooth acceleration
 	}
 	auto Velocity = CarMesh->GetComponentVelocity();
 	
-	UE_LOG(LogTemp, Warning, TEXT("CurrentVelocity: %s"), *Velocity.ToCompactString());
+	//UE_LOG(LogTemp, Warning, TEXT("CurrentVelocity: %s"), *Velocity.ToCompactString());
+}
+
+
+void ACar::CheckForStop()
+{
+	// Line-trace and see if there's a car or light in front of us
+	FHitResult OutHit;
+	auto Start = GetActorLocation();
+	auto End = Start + (GetActorForwardVector() * StopDistance);
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this);
+
+	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 0, 0, 1);
+	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_PhysicsBody, CollisionParams))
+	{
+		Stop = true;
+		UE_LOG(LogTemp, Warning, TEXT("STOP"));
+	}
+	else { Stop = false; }
+
+}
+
+// TODO add delegate
+void ACar::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+
 }
 
