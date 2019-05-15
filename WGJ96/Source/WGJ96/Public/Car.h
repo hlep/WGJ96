@@ -60,6 +60,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
 	bool bIsCounted = false;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
+	bool Stop = false;
+
 private:
 
 	void CheckForStop();
@@ -70,5 +73,4 @@ private:
 
 	float StopDistance = 250.f;
 
-	bool Stop = false;
 };
