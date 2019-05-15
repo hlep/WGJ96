@@ -69,6 +69,7 @@ private:
 
 	void OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+	// Unit vector where the car is headed
 	FVector HeadingVector = FVector(0);
 
 	float StopDistance = 250.f;

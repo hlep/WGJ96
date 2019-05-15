@@ -40,6 +40,7 @@ void ACar::BeginPlay()
 	Super::BeginPlay();
 	
 	HeadingVector = GetActorForwardVector();
+	GetActorRotation();
 }
 
 // Called every frame
@@ -64,16 +65,15 @@ void ACar::Drive(float DeltaTime)
 {
 	auto CurrentVelocity = CarMesh->GetComponentVelocity();
 
-	if(CurrentVelocity.GetMax() < MaxSpeed)
+	if(FMath::Abs<float>(CurrentVelocity.GetMax()) < MaxSpeed)
 	{
-		//auto VelocityToSet = (HeadingVector * (Acceleration * DeltaTime) + CurrentVelocity);
-		//FMath::Clamp<float>(VelocityToSet.X, 0.f, MaxSpeed);
-		//CarMesh->SetPhysicsLinearVelocity(VelocityToSet);
-
 		CarMesh->AddImpulse(HeadingVector * Acceleration, NAME_None, true);
-		//TODO Clamp velocity to MaxSpeed
-		
-		//TODO Make smooth acceleration
+
+		CurrentVelocity = CarMesh->GetComponentVelocity();
+		float VelocityFloat = CurrentVelocity.Size();
+		VelocityFloat = FMath::Clamp<float>(VelocityFloat, 0.f, MaxSpeed);
+
+		CarMesh->SetPhysicsLinearVelocity(FVector(VelocityFloat) * HeadingVector );
 	}
 	auto Velocity = CarMesh->GetComponentVelocity();
 	
