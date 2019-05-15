@@ -7,5 +7,5 @@ AWGJ96PlayerController::AWGJ96PlayerController()
 	bShowMouseCursor = true;
 	bEnableClickEvents = true;
 	bEnableTouchEvents = true;
-	DefaultMouseCursor = EMouseCursor::Crosshairs;
+	DefaultMouseCursor = EMouseCursor::Default;
 }
