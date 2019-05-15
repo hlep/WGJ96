@@ -45,13 +45,14 @@ void ACar::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	HeadingVector = FVector::ForwardVector;
 }
 
 // Called every frame
 void ACar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	Drive();
 }
 
 // Called to bind functionality to input
@@ -59,5 +60,13 @@ void ACar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ACar::Drive()
+{
+	//if(CarMesh->GetComponentVelocity().X < MaxSpeed)
+	auto Velocity = CarMesh->GetComponentVelocity();
+	CarMesh->SetPhysicsLinearVelocity(HeadingVector * MaxSpeed);
+	UE_LOG(LogTemp, Warning, TEXT("CurrentVelocity: %s"), *Velocity.ToCompactString());
 }
 

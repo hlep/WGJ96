@@ -49,10 +49,20 @@ public:
 
 protected:
 
+	UFUNCTION(BlueprintCallable)
+	void Drive();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup") // TODO make ReadOnly
 	ECarEnum CarClass = ECarEnum::CE_Car;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup") // TODO make ReadOnly
 	float MaxSpeed = 300;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
+	float Acceleration = 150;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
+	float Braking = 200;
+
+	FVector HeadingVector = FVector(0);
 };
