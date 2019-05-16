@@ -93,10 +93,9 @@ void ACar::Decelerate(float DeltaTime)
 
 		float VelocityFloat = CarMesh->GetComponentVelocity().Size();
 		VelocityFloat = FMath::Clamp<float>(VelocityFloat, 0.f, MaxSpeed);
-		UE_LOG(LogTemp, Warning, TEXT("DECELERATING: %f"), VelocityFloat);
-		CarMesh->SetPhysicsLinearVelocity(FVector(VelocityFloat) * HeadingVector); 
-	} else { UE_LOG(LogTemp, Warning, TEXT("SPEED IS LESS THAN 1")); }
 
+		CarMesh->SetPhysicsLinearVelocity(FVector(VelocityFloat) * HeadingVector); 
+	}
 }
 
 void ACar::CheckForStop()
@@ -108,7 +107,6 @@ void ACar::CheckForStop()
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
 
-	DrawDebugLine(GetWorld(), Start, End, FColor::Red, true, 10, 0, 1);
 	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_PhysicsBody, CollisionParams))
 	{
 		FVector CarVector = FVector(0);
