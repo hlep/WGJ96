@@ -3,6 +3,7 @@
 
 #include "RoadPart.h"
 #include "Car.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 ARoadPart::ARoadPart()

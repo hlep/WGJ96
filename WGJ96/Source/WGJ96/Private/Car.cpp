@@ -2,13 +2,13 @@
 
 
 #include "Car.h"
-#include "GameFramework/PawnMovementComponent.h"
-#include "DrawDebugHelpers.h"
+#include "GameFramework/Actor.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 ACar::ACar()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	CarMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CarMesh"));
@@ -16,17 +16,26 @@ ACar::ACar()
 	CarMesh->SetNotifyRigidBodyCollision(true); // Simulation generates hit events
 	RootComponent = CarMesh;
 
+	auto RandNum = FMath::RandRange(0, 10);
+
+	if (RandNum <= 1) { CarClass = ECarEnum::CE_Truck; }
+	else if (RandNum <= 3) { CarClass = ECarEnum::CE_Bus; }
+	else { CarClass = ECarEnum::CE_Car; }
+
 	// Set up variables for each car type
 	switch (CarClass)
 	{
 	case ECarEnum::CE_Car:
 		MaxSpeed = 800;
+		Acceleration = 1000;
 		break;
 	case ECarEnum::CE_Bus:
 		MaxSpeed = 600;
+		Acceleration = 800;
 		break;
 	case ECarEnum::CE_Truck:
 		MaxSpeed = 400;
+		Acceleration = 600;
 		break;
 	default:
 		break;

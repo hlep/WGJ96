@@ -70,7 +70,7 @@ protected:
 	float Acceleration = 1000;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	float Braking = 2000;
+	float Braking = 2500;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
 	bool bIsCounted = false;
@@ -87,7 +87,7 @@ private:
 	// Unit vector where the car is headed
 	FVector HeadingVector = FVector(0);
 
-	float StopDistance = 200.f;
+	float StopDistance = 250.f;
 
 	float CrashForce = 4500.f;
 
