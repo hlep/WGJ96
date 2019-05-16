@@ -67,7 +67,7 @@ protected:
 	float MaxSpeed = 600;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	float Acceleration = 700;
+	float Acceleration = 1000;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
 	float Braking = 2000;
