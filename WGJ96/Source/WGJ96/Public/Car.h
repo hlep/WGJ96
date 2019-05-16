@@ -40,7 +40,12 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable)
+	void SetIsCounted(bool bToSet);
+
 	FVector GetHeadingVector();
+
+	bool GetIsCrashed();
 
 protected:
 
@@ -50,6 +55,9 @@ protected:
 	UFUNCTION(BlueprintCallable) //TODO Check if it needs to be BPCallable
 	void Decelerate(float DeltaTime);
 
+	UFUNCTION(BlueprintCallable)
+	void Crash();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup") // TODO make ReadOnly
 	ECarEnum CarClass = ECarEnum::CE_Car;
 
@@ -57,7 +65,7 @@ protected:
 	float MaxSpeed = 600;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	float Acceleration = 500;
+	float Acceleration = 700;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
 	float Braking = 2000;
@@ -77,6 +85,10 @@ private:
 	// Unit vector where the car is headed
 	FVector HeadingVector = FVector(0);
 
-	float StopDistance = 350.f;
+	float StopDistance = 200.f;
+
+	float CrashForce = 4500.f;
+
+	bool bIsCrashed = false;
 
 };

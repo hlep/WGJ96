@@ -40,20 +40,24 @@ void ACar::BeginPlay()
 	Super::BeginPlay();
 	
 	HeadingVector = GetActorForwardVector();
-	GetActorRotation();
+
 }
 
 // Called every frame
 void ACar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	CheckForStop();
-	if (!Stop) 
+	if (!bIsCrashed) 
 	{
-		Accelerate(DeltaTime);
-	}else
-	{
-		Decelerate(DeltaTime);
+		CheckForStop();
+		if (!Stop)
+		{
+			Accelerate(DeltaTime);
+		}
+		else
+		{
+			Decelerate(DeltaTime);
+		}
 	}
 }
 
@@ -66,40 +70,33 @@ void ACar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ACar::Accelerate(float DeltaTime)
 {
-	auto CurrentVelocity = CarMesh->GetComponentVelocity();
-
-	if(FMath::Abs<float>(CurrentVelocity.GetMax()) < MaxSpeed)
+	if (!CarMesh) { return; } // Pointer protection
+	if(FMath::Abs<float>(CarMesh->GetComponentVelocity().GetMax()) < MaxSpeed)
 	{
 		CarMesh->AddImpulse(HeadingVector * Acceleration * DeltaTime, NAME_None, true);
 
-		CurrentVelocity = CarMesh->GetComponentVelocity();
-		float VelocityFloat = CurrentVelocity.Size();
+		float VelocityFloat = CarMesh->GetComponentVelocity().Size();
 		VelocityFloat = FMath::Clamp<float>(VelocityFloat, 0.f, MaxSpeed);
 
 		CarMesh->SetPhysicsLinearVelocity(FVector(VelocityFloat) * HeadingVector );
 	}
-	auto Velocity = CarMesh->GetComponentVelocity();
-	
-	UE_LOG(LogTemp, Warning, TEXT("CurrentVelocity: %s"), *Velocity.ToCompactString());
+
 }
 
 
 void ACar::Decelerate(float DeltaTime)
 {
-	auto CurrentVelocity = CarMesh->GetComponentVelocity();
-
-	if (FMath::Abs<float>(CurrentVelocity.GetMax()) > 1)
+	if (!CarMesh) { return; } // Pointer protection
+	if (FMath::Abs<float>(CarMesh->GetComponentVelocity().GetMax()) > 1)
 	{
 		CarMesh->AddImpulse(HeadingVector * Braking * DeltaTime * -1.f, NAME_None, true);
 
 		float VelocityFloat = CarMesh->GetComponentVelocity().Size();
 		VelocityFloat = FMath::Clamp<float>(VelocityFloat, 0.f, MaxSpeed);
 
-		CarMesh->SetPhysicsLinearVelocity(FVector(VelocityFloat) * HeadingVector);
+		CarMesh->SetPhysicsLinearVelocity(FVector(VelocityFloat) * HeadingVector); 
 	}
-	auto Velocity = CarMesh->GetComponentVelocity();
 
-	UE_LOG(LogTemp, Warning, TEXT("CurrentVelocity: %s"), *Velocity.ToCompactString());
 }
 
 void ACar::CheckForStop()
@@ -116,24 +113,40 @@ void ACar::CheckForStop()
 	{
 		FVector CarVector = FVector(0);
 		auto CarInFront = Cast<ACar>(OutHit.GetActor());
-		if (CarInFront)
+		if (CarInFront) // If we hit a car with LineTrace
 		{
 			CarVector = CarInFront->GetHeadingVector();
-			if (!CarVector.Equals(HeadingVector, 0.01))
+			if (!CarVector.Equals(HeadingVector, 0.01) || CarInFront->GetIsCrashed())
 			{
-				Stop = false; // Stop if car is headed in the same direction as this
+				Stop = false; 
 			}
 			else 
 			{
-				Stop = true;
+				Stop = true; // Stop if car is headed in the same direction as this
 			}
 		}
 		else 
 		{
-			Stop = true;
+			Stop = true; // Stop anyway if there's something (not a car) in front of us
 		}
 	}
-	else { Stop = false; }
+	else { Stop = false; } // Don't stop if nothing is hit by LineTrace
+}
+
+void ACar::Crash()
+{
+	if (!bIsCrashed) 
+	{
+		float ImpDirection = -1;
+		if (FMath::RandBool()) { ImpDirection = FMath::Abs<float>(ImpDirection); } // Randomize where to apply force
+
+		auto Impulse = GetActorRightVector() * ImpDirection * FVector(CrashForce);
+		auto ImpLocation = GetActorLocation() + (HeadingVector * FVector(15) * ImpDirection);
+		CarMesh->AddImpulseAtLocation(Impulse, ImpLocation);
+		if(true){ CarMesh->AddImpulseAtLocation(GetActorUpVector() * (FVector(CrashForce) * 0.6), ImpLocation); } 
+		// Sometimes add up vector to make them roll over
+		bIsCrashed = true;
+	}
 }
 
 // TODO add delegate
@@ -144,3 +157,9 @@ void ACar::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector Nor
 
 FVector ACar::GetHeadingVector()
 {	return HeadingVector;	}
+
+bool ACar::GetIsCrashed()
+{	return bIsCrashed;	}
+
+void ACar::SetIsCounted(bool bToSet)
+{	bIsCounted = bToSet;	}
