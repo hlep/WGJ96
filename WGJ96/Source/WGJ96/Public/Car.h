@@ -45,7 +45,10 @@ public:
 protected:
 
 	UFUNCTION(BlueprintCallable)
-	void Drive(float DeltaTime);
+	void Accelerate(float DeltaTime);
+
+	UFUNCTION(BlueprintCallable) //TODO Check if it needs to be BPCallable
+	void Decelerate(float DeltaTime);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup") // TODO make ReadOnly
 	ECarEnum CarClass = ECarEnum::CE_Car;
@@ -54,10 +57,10 @@ protected:
 	float MaxSpeed = 600;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	float Acceleration = 150;
+	float Acceleration = 500;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	float Braking = 200;
+	float Braking = 2000;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
 	bool bIsCounted = false;
@@ -74,6 +77,6 @@ private:
 	// Unit vector where the car is headed
 	FVector HeadingVector = FVector(0);
 
-	float StopDistance = 250.f;
+	float StopDistance = 350.f;
 
 };

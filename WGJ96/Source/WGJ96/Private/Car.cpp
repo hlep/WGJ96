@@ -20,13 +20,13 @@ ACar::ACar()
 	switch (CarClass)
 	{
 	case ECarEnum::CE_Car:
-		MaxSpeed = 300;
+		MaxSpeed = 800;
 		break;
 	case ECarEnum::CE_Bus:
-		MaxSpeed = 200;
+		MaxSpeed = 600;
 		break;
 	case ECarEnum::CE_Truck:
-		MaxSpeed = 150;
+		MaxSpeed = 400;
 		break;
 	default:
 		break;
@@ -50,7 +50,10 @@ void ACar::Tick(float DeltaTime)
 	CheckForStop();
 	if (!Stop) 
 	{
-		Drive(DeltaTime);
+		Accelerate(DeltaTime);
+	}else
+	{
+		Decelerate(DeltaTime);
 	}
 }
 
@@ -61,13 +64,13 @@ void ACar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void ACar::Drive(float DeltaTime)
+void ACar::Accelerate(float DeltaTime)
 {
 	auto CurrentVelocity = CarMesh->GetComponentVelocity();
 
 	if(FMath::Abs<float>(CurrentVelocity.GetMax()) < MaxSpeed)
 	{
-		CarMesh->AddImpulse(HeadingVector * Acceleration, NAME_None, true);
+		CarMesh->AddImpulse(HeadingVector * Acceleration * DeltaTime, NAME_None, true);
 
 		CurrentVelocity = CarMesh->GetComponentVelocity();
 		float VelocityFloat = CurrentVelocity.Size();
@@ -77,9 +80,27 @@ void ACar::Drive(float DeltaTime)
 	}
 	auto Velocity = CarMesh->GetComponentVelocity();
 	
-	//UE_LOG(LogTemp, Warning, TEXT("CurrentVelocity: %s"), *Velocity.ToCompactString());
+	UE_LOG(LogTemp, Warning, TEXT("CurrentVelocity: %s"), *Velocity.ToCompactString());
 }
 
+
+void ACar::Decelerate(float DeltaTime)
+{
+	auto CurrentVelocity = CarMesh->GetComponentVelocity();
+
+	if (FMath::Abs<float>(CurrentVelocity.GetMax()) > 1)
+	{
+		CarMesh->AddImpulse(HeadingVector * Braking * DeltaTime * -1.f, NAME_None, true);
+
+		float VelocityFloat = CarMesh->GetComponentVelocity().Size();
+		VelocityFloat = FMath::Clamp<float>(VelocityFloat, 0.f, MaxSpeed);
+
+		CarMesh->SetPhysicsLinearVelocity(FVector(VelocityFloat) * HeadingVector);
+	}
+	auto Velocity = CarMesh->GetComponentVelocity();
+
+	UE_LOG(LogTemp, Warning, TEXT("CurrentVelocity: %s"), *Velocity.ToCompactString());
+}
 
 void ACar::CheckForStop()
 {
