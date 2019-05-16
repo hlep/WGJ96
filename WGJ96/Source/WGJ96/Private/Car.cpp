@@ -143,8 +143,9 @@ void ACar::Crash()
 		auto Impulse = GetActorRightVector() * ImpDirection * FVector(CrashForce);
 		auto ImpLocation = GetActorLocation() + (HeadingVector * FVector(15) * ImpDirection);
 		CarMesh->AddImpulseAtLocation(Impulse, ImpLocation);
-		if(true){ CarMesh->AddImpulseAtLocation(GetActorUpVector() * (FVector(CrashForce) * 0.6), ImpLocation); } 
-		// Sometimes add up vector to make them roll over
+		// Add up vector to make them roll over
+		CarMesh->AddImpulseAtLocation(GetActorUpVector() * (FVector(CrashForce) * 0.6), ImpLocation);
+
 		bIsCrashed = true;
 	}
 }
@@ -163,3 +164,6 @@ bool ACar::GetIsCrashed()
 
 void ACar::SetIsCounted(bool bToSet)
 {	bIsCounted = bToSet;	}
+
+void ACar::ModifyMaxSpeed(float SpeedModifier)
+{	MaxSpeed = MaxSpeed * SpeedModifier;	}

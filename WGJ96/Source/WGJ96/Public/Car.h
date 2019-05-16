@@ -16,7 +16,6 @@ enum class ECarEnum : uint8
 	CE_Truck	UMETA(DisplayName = "Truck")
 };
 
-
 UCLASS()
 class WGJ96_API ACar : public APawn
 {
@@ -42,6 +41,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetIsCounted(bool bToSet);
+
+	UFUNCTION(BlueprintCallable)
+	void ModifyMaxSpeed(float SpeedToSet);
 
 	FVector GetHeadingVector();
 

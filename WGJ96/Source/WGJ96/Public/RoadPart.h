@@ -8,6 +8,14 @@
 
 class ACar;
 
+UENUM(BlueprintType)		//"BlueprintType" is essential to include
+enum class ERoadEnum : uint8
+{
+	RE_Green		UMETA(DisplayName = "Green"),
+	RE_Yellow		UMETA(DisplayName = "Yellow"),
+	RE_Red			UMETA(DisplayName = "Red")
+};
+
 UCLASS()
 class WGJ96_API ARoadPart : public AActor
 {
@@ -32,6 +40,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Setup")
+	bool bIsSpawning = true;
+
 protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
@@ -39,6 +50,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
 	float SpawnSpeed = 3.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Setup")
+	ERoadEnum RoadSpeed = ERoadEnum::RE_Green;
 
 private:
 
