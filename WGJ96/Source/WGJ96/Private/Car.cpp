@@ -87,15 +87,15 @@ void ACar::Accelerate(float DeltaTime)
 void ACar::Decelerate(float DeltaTime)
 {
 	if (!CarMesh) { return; } // Pointer protection
-	if (FMath::Abs<float>(CarMesh->GetComponentVelocity().GetMax()) > 1)
+	if (CarMesh->GetComponentVelocity().Size() > 10.f)
 	{
-		CarMesh->AddImpulse(HeadingVector * Braking * DeltaTime * -1.f, NAME_None, true);
+		CarMesh->AddImpulse(HeadingVector * Braking * DeltaTime * FVector(-1), NAME_None, true);
 
 		float VelocityFloat = CarMesh->GetComponentVelocity().Size();
 		VelocityFloat = FMath::Clamp<float>(VelocityFloat, 0.f, MaxSpeed);
-
+		UE_LOG(LogTemp, Warning, TEXT("DECELERATING: %f"), VelocityFloat);
 		CarMesh->SetPhysicsLinearVelocity(FVector(VelocityFloat) * HeadingVector); 
-	}
+	} else { UE_LOG(LogTemp, Warning, TEXT("SPEED IS LESS THAN 1")); }
 
 }
 
@@ -103,12 +103,12 @@ void ACar::CheckForStop()
 {
 	// Line-trace and see if there's a car or light in front of us
 	FHitResult OutHit;
-	auto Start = GetActorLocation();
+	auto Start = GetActorLocation()+GetActorRotation().Vector();
 	auto End = Start + (GetActorForwardVector() * StopDistance);
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
 
-	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 0, 0, 1);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Red, true, 10, 0, 1);
 	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_PhysicsBody, CollisionParams))
 	{
 		FVector CarVector = FVector(0);
@@ -166,4 +166,10 @@ void ACar::SetIsCounted(bool bToSet)
 {	bIsCounted = bToSet;	}
 
 void ACar::ModifyMaxSpeed(float SpeedModifier)
-{	MaxSpeed = MaxSpeed * SpeedModifier;	}
+{	
+	if (!bIsSpeedModified) 
+	{
+		MaxSpeed = MaxSpeed * SpeedModifier;
+		bIsSpeedModified = true;
+	}
+}

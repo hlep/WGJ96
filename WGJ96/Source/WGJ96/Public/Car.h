@@ -93,4 +93,6 @@ private:
 
 	bool bIsCrashed = false;
 
+	bool bIsSpeedModified = false;
+
 };
