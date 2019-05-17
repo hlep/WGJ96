@@ -45,6 +45,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ModifyMaxSpeed(float SpeedToSet);
 
+	UFUNCTION(BlueprintCallable)
+		bool GetIsCounted();
+
+	UFUNCTION(BlueprintCallable)
+		ECarEnum GetCarClass();
+
 	FVector GetHeadingVector();
 
 	bool GetIsCrashed();
@@ -56,6 +62,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable) //TODO Check if it needs to be BPCallable
 	void Decelerate(float DeltaTime);
+
+	UFUNCTION(BlueprintCallable)
+	void Creep(float DeltaTime, float Distance);
 
 	UFUNCTION(BlueprintCallable)
 	void Crash();
@@ -70,7 +79,10 @@ protected:
 	float Acceleration = 1000;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	float Braking = 2500;
+	float Braking = 1200;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
+	float CreepSpeed = 100;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
 	bool bIsCounted = false;
@@ -84,10 +96,14 @@ private:
 
 	void OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+	FHitResult LineTrace();
+
 	// Unit vector where the car is headed
 	FVector HeadingVector = FVector(0);
 
-	float StopDistance = 250.f;
+	float TraceDistance = 350.f;
+
+	float StopDistance = 80.f;
 
 	float CrashForce = 4500.f;
 
